@@ -2,7 +2,7 @@ import express, { type Request, type Response, type Express } from "express";
 import { PrismaClient } from "@prisma/client";
 import cors from "cors";
 import bcrypt from "bcryptjs";
-import { generateTokens, verifyToken } from "./authtoken";
+import { generateTokens, verifyToken } from "./auth";
 
 const prisma = new PrismaClient();
 const app: Express = express();
