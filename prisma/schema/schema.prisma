@@ -11,6 +11,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+    previewFeatures = ["prismaSchemaFolder"]
 }
 
 model Company {
@@ -30,17 +31,3 @@ model Appointment {
   company Company @relation(fields: [company_id], references: [id])
 }
 
-model User {
-  id Int @id @default(autoincrement())
-  email String @unique
-  login String @unique
-  password String
-  name String?
-  surname String?
-  pesel String?
-  birth_date DateTime?
-  phone String?
-  country String?
-  district String?
-  zip_code String?
-}

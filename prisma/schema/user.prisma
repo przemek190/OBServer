@@ -1,0 +1,23 @@
+model User {
+  id Int @id @default(autoincrement())
+  email String @unique
+  login String @unique
+  password String
+  name String?
+  surname String?
+  pesel String?
+  birth_date DateTime?
+  phone String?
+  country String?
+  district String?
+  zip_code String?
+  resetTokens PasswordResetToken[]
+}
+
+model PasswordResetToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+}

@@ -1,13 +1,9 @@
 import type { NextFunction, Request, Response } from "express";
 import jwt, { type JwtPayload } from "jsonwebtoken";
+import type { User } from "./types/user";
 
 const JWT_SECRET = "secret_key";
 const JWT_REFRESH_SECRET = "refresh_secret_key";
-
-interface User {
-  id: number;
-  email: string;
-}
 
 export const generateTokens = (user: User) => {
   const payload: User = {
@@ -45,16 +41,12 @@ export const verifyToken = (
   const token = authHeader.split(" ")[1];
 
   try {
-    console.log("token", token);
-
     const decoded = jwt.verify(token, JWT_SECRET);
-    console.log("decoded", decoded);
 
     req.user = decoded;
     next();
   } catch (err) {
-    console.log("error", err);
-
+    console.error("error", err);
     res.status(500).json({ message: "Internal server error" });
   }
 };
