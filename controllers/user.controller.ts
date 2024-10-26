@@ -17,34 +17,38 @@ const transporter = nodemailer.createTransport({
 
 const register = async (req: Request, res: Response) => {
   try {
-    const { email, login, password } = req.body;
+    const { email, login, password, type } = req.body;
 
     const isEmailBusy = await prisma.user.findUnique({
       where: { email },
     });
 
     const isLoginBusy = await prisma.user.findUnique({
-      where: { email },
+      where: { login },
     });
 
     if (isEmailBusy || isLoginBusy) {
-      res.status(404).json({ message: "Email or password are not available" });
+      res.status(400).json({ message: "Email or login are not available" });
       return;
     }
 
     try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+
       await prisma.user.create({
         data: {
           email,
           login,
-          password,
+          password: hashedPassword,
+          type,
         },
       });
+
       res.status(200).json({ message: "User successfully registered" });
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
         console.error(
-          "There is a unique constraint violation, a new user cannot be created with this email"
+          "There is a unique constraint violation; a new user cannot be created with this email or login."
         );
       }
       console.error(err);
@@ -72,7 +76,7 @@ const login = async (req: Request, res: Response) => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid && user.login !== "pl") {
-      res.status(401).json({ message: "Login or password not validate " });
+      res.status(401).json({ message: "Login or password not validate" });
       return;
     }
 
@@ -171,6 +175,6 @@ const resetPassword = async (req: Request, res: Response) => {
 export default {
   login,
   register,
-  recoverPassword,
   resetPassword,
+  recoverPassword,
 };
